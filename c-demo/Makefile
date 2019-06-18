@@ -1,6 +1,6 @@
 .SUFFIXES:
 
-.DUMMY: clean
+.PHONY: clean
 
 CXXFLAGS := $(CXXFLAGS) -DDEBUG -g
 

@@ -1,0 +1,41 @@
+#!/usr/bin/env sh
+
+name=boostdemo
+tag=1
+
+docker image build -t $name:$tag - <<'EOF'
+FROM debian:testing-slim
+
+LABEL author "Alec Clews <alecclews@gmail.com>"
+LABEL description "C/CPP dev Clang based"
+
+ARG BOOST_VERSION=1.70.0 
+
+ENV DEBIAN_FRONTEND=noninteractive  
+RUN apt-get update && \
+    apt-get -y install build-essential clang libc-dev-bin gdb git
+
+RUN git clone --recursive https://github.com/boostorg/boost.git && \
+    cd boost && \
+    git checkout boost-${BOOST_VERSION}
+
+WORKDIR /boost
+
+RUN ./bootstrap.sh && ./b2 headers
+
+
+ENV CPLUS_INCLUDE_PATH=/boost
+
+WORKDIR /work
+
+CMD [ "/bin/bash"]
+EOF
+
+
+if [ $? -eq 0 ] ; then
+    if uname -a | grep Microsoft ; then
+        docker container run -it --rm --mount type=bind,src=$(wslpath -w $PWD),dst=/work --name myDev $name:$tag "$@"
+    else
+        docker container run -it --rm --mount type=bind,src=$PWD,dst=/work --name myDev $name:$tag "$@"
+    fi
+fi

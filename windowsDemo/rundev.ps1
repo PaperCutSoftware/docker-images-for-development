@@ -34,8 +34,8 @@ WORKDIR /work
 
 COPY server.py /server.py
 
-ENTRYPOINT ["python3", "-u", "/server.py"]
+CMD ["python3", "-u", "/server.py"]
 
-'@ | docker image build -t luademo:1 -f - 'github.com/PaperCutSoftware/howto-xmlrpc-clients#:server'
+'@ | docker image build -t luademo:2 -f - 'github.com/PaperCutSoftware/howto-xmlrpc-clients#:server'
 
-if ($?) { docker container run -it --rm --mount type=bind,src=$PWD,dst=/work --name myDev luademo:1 $args }
+if ($?) { docker container run -it --rm --mount type=bind,src=$PWD,dst=/work --name myDev luademo:2 $args }
